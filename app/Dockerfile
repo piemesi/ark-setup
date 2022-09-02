@@ -20,7 +20,7 @@ RUN python --version
 WORKDIR /code
 
 # copy the dependencies file to the working directory
-COPY app/requirements_freeze.txt requirements_freeze.txt
+COPY requirements_freeze.txt requirements_freeze.txt
 
 RUN apt-get update && apt-get -y install python-dev python-virtualenv \
     libldap2-dev libsasl2-dev python-tk tk tk-dev libffi-dev libblas-dev libssl-dev libblas3gf \
