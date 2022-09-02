@@ -1,0 +1,71 @@
+version: "3.1"
+
+services:
+
+  spa:
+    container_name: spa
+    build: ./spa
+    command: sh -c "npm start"
+    ports:
+      - 4200:4200
+    working_dir: /home/node/app
+    depends_on:
+      - app
+    links:
+      - app
+    volumes:
+      - ./spa/app:/home/node/app
+      - ./spa/node_modules:/home/node/app/node_modules
+    networks:
+      - main
+            
+  app:
+    container_name: arkenstone
+    build: ./app
+    ports: 
+      - 8002:8000
+      - 80:80
+    depends_on:
+      - mysql
+    volumes:
+      - ./app/app/:/code/
+    links:
+      - mysql
+    environment:
+       MYSQL_DATABASE: "${MYSQL_DB_NAME}"
+       MYSQL_PASSWORD: "${MYSQL_PASS}"
+       MYSQL_USER: "${MYSQL_USER}"
+       DEV_ENV: "${DEV_ENV}"
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             gunicorn admin.wsgi -b :80 --env DJANGO_SETTINGS_MODULE=admin.debug_settings --threads 4 --timeout 300"
+    networks:
+      - main
+  
+  mysql:
+     build: ./mysql
+     container_name: mysql
+#     restart: always
+     environment:
+       ON_CREATE_DB: "${MYSQL_DB_NAME}"
+       MYSQL_DATABASE: "${MYSQL_DB_NAME}"
+       MYSQL_PASS: "${MYSQL_PASS}"
+       MYSQL_USER: "${MYSQL_USER}"
+       MYSQL_START_TIMEOUT: 900
+       TZ: UTC
+     ports:
+       - "${MYSQL_PORT}"
+     restart: unless-stopped
+     volumes:
+#       - /var/run/mysqld/mysqld.sock
+       - ./mysql/logs:/var/log/mysql:rw
+       - ./mysql/data:/var/lib/mysql:rw
+#       - ./mysql/my.cnf:/etc/mysql/my.cnf
+     networks: 
+       - main
+
+networks:
+  main:
+    driver: bridge
+
