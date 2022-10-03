@@ -50,6 +50,7 @@ RUN apt-get install python-tk tk-dev -y
 # copy the content of the local src directory to the working directory
 COPY app/. .
 COPY init/sp ./sp
+COPY requirements_freeze.txt requirements_freeze.txt
 RUN pip install -r requirements_freeze.txt
 
 RUN mkdir -p /arkenstone/opt/nest/etc

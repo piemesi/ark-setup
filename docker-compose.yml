@@ -5,7 +5,7 @@ services:
   spa:
     container_name: spa
     build: ./spa
-    command: sh -c "npm start"
+    command: sh -c "npm i && ls -lah && npm start"
     ports:
       - 4200:4200
     working_dir: /home/node/app
@@ -14,8 +14,10 @@ services:
     links:
       - app
     volumes:
-      - ./spa/app:/home/node/app
-      - ./spa/node_modules:/home/node/app/node_modules
+      - ~/code/arkenstone-ui-v2_2/package.json:/home/node/app/package.json
+      - ~/code/arkenstone-ui-v2_2:/home/node/app
+#      - ~/code/arkenstone-ui-v2/node_modules:/home/node/app/node_modules
+#      - ./spa/node_modules:/home/node/app/node_modules
     networks:
       - main
             
@@ -28,7 +30,8 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./app/app/:/code/
+      - ~/code/arkenstone_code/arkenstone/:/code/
+#      - ./app/app/:/code/
     links:
       - mysql
     environment:
@@ -39,6 +42,7 @@ services:
     command: >
       sh -c "python manage.py collectstatic --noinput &&
              python manage.py migrate &&
+             python manage.py ensure_adminuser --username=$DJANGO_SUPERUSER_USERNAME --email=$DJANGO_SUPERUSER_EMAIL --password=$DJANGO_SUPERUSER_PASSWORD &&
              gunicorn admin.wsgi -b :80 --env DJANGO_SETTINGS_MODULE=admin.debug_settings --threads 4 --timeout 300"
     networks:
       - main

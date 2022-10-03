@@ -5,8 +5,8 @@
 #python manage.py collectstatic --noinput
 
 # Apply database migrations
-echo "Apply database migrations"
-python /code/manage.py migrate
+######echo "Apply database migrations"
+######python /code/manage.py migrate
 
 # Start server
 #echo "Starting server"
@@ -14,5 +14,18 @@ python /code/manage.py migrate
 
 #tail -f /dev/null
 
-cd /code && gunicorn admin.wsgi -b :8000 --env DJANGO_SETTINGS_MODULE=admin.debug_settings --threads 4 --timeout 300
+######cd /code && gunicorn admin.wsgi -b :8000 --env DJANGO_SETTINGS_MODULE=admin.debug_settings --threads 4 --timeout 300
+
+
+
+
+if [ "$DJANGO_SUPERUSER_USERNAME" ]
+then
+    python manage.py createsuperuser \
+        --noinput \
+        --username $DJANGO_SUPERUSER_USERNAME \
+        --email $DJANGO_SUPERUSER_USERNAME
+fi
+
+$@
 
