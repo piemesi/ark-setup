@@ -39,6 +39,7 @@ services:
        MYSQL_PASSWORD: "${MYSQL_PASS}"
        MYSQL_USER: "${MYSQL_USER}"
        DEV_ENV: "${DEV_ENV}"
+       SUPERUSER_USERNAME: "${DJANGO_SUPERUSER_USERNAME}"
     command: >
       sh -c "python manage.py collectstatic --noinput &&
              python manage.py migrate &&
