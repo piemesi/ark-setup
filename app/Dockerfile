@@ -51,7 +51,11 @@ RUN apt-get install python-tk tk-dev -y
 COPY app/. .
 COPY init/sp ./sp
 COPY requirements_freeze.txt requirements_freeze.txt
+COPY requirements_freeze.txt requirements.txt
 RUN pip install -r requirements_freeze.txt
+
+RUN pip uninstall django-cors-headers -y \
+	&& pip install django-cors-headers==2.1.0
 
 RUN mkdir -p /arkenstone/opt/nest/etc
 
